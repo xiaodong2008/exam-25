@@ -14,6 +14,11 @@ const router = createRouter({
       name: "Vocab",
       component: () => import("./pages/English/vocab/List.vue"),
     },
+    {
+      path: "/english/vocab/test-word",
+      name: "TestWord",
+      component: () => import("./pages/English/vocab/WordTest.vue"),
+    },
   ],
 });
 

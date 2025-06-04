@@ -26,6 +26,10 @@
         <span class="word_cn">{{ item.word_cn }}</span>
       </div>
     </div>
+
+    <div class="navigation">
+      <RouterLink to="/english/vocab/test-word">Go to Word Test ></RouterLink>
+    </div>
   </div>
 </template>
 
@@ -151,6 +155,22 @@ const vocabs_combined = vocabs.map((word, index) => ({
       &:hover {
         filter: blur(0);
       }
+    }
+  }
+}
+
+.navigation {
+  margin-top: 20px;
+  text-align: center;
+
+  a {
+    color: #7553ff;
+    text-decoration: none;
+    font-size: 18px;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: #5227ff;
     }
   }
 }
