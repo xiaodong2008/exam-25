@@ -202,6 +202,7 @@ const vocabs_cn = [
   justify-content: center;
   margin-bottom: 20px;
   gap: 6px;
+  flex-wrap: wrap;
 
   .checkbox:not(:first-child) {
     margin-left: 10px;
