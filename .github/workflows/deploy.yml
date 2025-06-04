@@ -33,12 +33,11 @@ jobs:
       - name: Pack
         run: npm run build
 
-      # mv dist to _site
-      - name: Ready to Upload
-        run: mv dist _site
-
-      - name: Upload Artifact
-        uses: actions/upload-pages-artifact@v2
+      - name: Upload static files as artifact
+        id: deployment
+        uses: actions/upload-pages-artifact@v3 # or specific "vX.X.X" version tag for this action
+        with:
+          path: dist/
 
   Deploy:
     runs-on: ubuntu-latest
@@ -50,5 +49,5 @@ jobs:
 
     steps:
       - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v3
         id: deployment
