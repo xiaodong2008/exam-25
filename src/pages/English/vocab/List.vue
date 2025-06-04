@@ -22,8 +22,22 @@
           'show-chinese-when-hover': showChineseWhenHover,
         }"
       >
-        <span class="word">{{ item.word }}</span>
-        <span class="word_cn">{{ item.word_cn }}</span>
+        <span
+          class="word"
+          @click="show = index + 'en'"
+          :class="{
+            show: show === index + 'en',
+          }"
+          >{{ item.word }}</span
+        >
+        <span
+          class="word_cn"
+          @click="show = index + 'cn'"
+          :class="{
+            show: show === index + 'cn',
+          }"
+          >{{ item.word_cn }}</span
+        >
       </div>
     </div>
 
@@ -39,6 +53,7 @@ import { ref } from "vue";
 
 const showWhenHover = ref(false);
 const showChineseWhenHover = ref(false);
+const show = ref("0");
 
 const vocabs = [
   "amateur",
@@ -145,7 +160,8 @@ const vocabs_combined = vocabs.map((word, index) => ({
     &.show-when-hover .word {
       filter: blur(5px);
 
-      &:hover {
+      &:hover,
+      &.show {
         filter: blur(0);
       }
     }
@@ -153,7 +169,8 @@ const vocabs_combined = vocabs.map((word, index) => ({
     &.show-chinese-when-hover .word_cn {
       filter: blur(5px);
 
-      &:hover {
+      &:hover,
+      &.show {
         filter: blur(0);
       }
     }
