@@ -9,7 +9,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
 // modelValue for v-model
 const modelValue = defineModel();
 </script>
