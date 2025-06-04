@@ -12,7 +12,7 @@ const router = createRouter({
     {
       path: "/english/vocab",
       name: "Vocab",
-      component: () => import("./pages/English/Vocab.vue"),
+      component: () => import("./pages/English/vocab/List.vue"),
     },
   ],
 });

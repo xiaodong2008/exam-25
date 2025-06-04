@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import CheckBox from "../../components/CheckBox.vue";
+import CheckBox from "@/components/CheckBox.vue";
 import { ref } from "vue";
 
 const showWhenHover = ref(false);
