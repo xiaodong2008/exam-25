@@ -2,7 +2,12 @@
   <div class="word-test">
     <div class="header">
       <h1>Word Test</h1>
-      <div class="toolbar"></div>
+      <div class="toolbar">
+        <CheckBox v-model="dontStop" />
+        <span class="toggle-text">Don't stop after one round</span>
+        <CheckBox v-model="oneMoreAttempt" />
+        <span class="toggle-text">One more attempt for each word</span>
+      </div>
     </div>
     <div class="content">
       <div v-if="questionQueue.length > 0" class="question">
@@ -19,15 +24,31 @@
           }"
         />
         <span
+          class="attempt-message"
+          v-if="attempt"
+          style="color: #f44336; font-size: 14px"
+        >
+          Please try again!
+        </span>
+        <span
           class="correct-answer"
           v-if="submittedAnwser && answerCorrect === false"
           style="color: #f44336; font-size: 14px"
-          >Correct answer: {{ vocabs[questionQueue[0]] }}</span
         >
+          Correct answer: {{ vocabs[questionQueue[0]] }}
+        </span>
+        <span
+          class="correct-answer"
+          v-if="submittedAnwser && answerCorrect === true"
+          style="color: #4caf50; font-size: 14px"
+        >
+          Correct!
+        </span>
+        <span> {{ totalAnswered }}/{{ qNums.length }} answered </span>
       </div>
       <div v-else class="word-test__end">
         <p>Test completed!</p>
-        <p>Your score of this round: {{ score }}/20</p>
+        <p>Your score of this round: {{ score }}/{{ qNums.length }}</p>
         <button @click="setupNewRound">Start Over</button>
       </div>
     </div>
@@ -42,6 +63,7 @@
 </template>
 
 <script setup lang="ts">
+import CheckBox from "@/components/CheckBox.vue";
 import { reactive, ref } from "vue";
 
 const qNums = setupQNums(20);
@@ -51,6 +73,10 @@ const totalScore = ref(0);
 const totalAnswered = ref(0);
 const submittedAnwser = ref(false);
 const answerCorrect = ref(null as boolean | null); // Use null to indicate no answer checked yet
+const attempt = ref(false);
+
+const dontStop = ref(false); // Checkbox to control whether to stop after one round
+const oneMoreAttempt = ref(false); // Checkbox for one more attempt for each word
 
 const answer = ref("");
 
@@ -86,8 +112,13 @@ function checkAnswer() {
     totalScore.value++;
     answerCorrect.value = true;
   } else {
+    if (oneMoreAttempt.value && !attempt.value) {
+      attempt.value = true;
+      return;
+    }
     answerCorrect.value = false;
   }
+  attempt.value = false; // Reset the attempt state after a correct answer
   totalAnswered.value++;
 
   submittedAnwser.value = true;
@@ -99,6 +130,14 @@ function nextQuestion() {
     answer.value = ""; // Clear the input
     submittedAnwser.value = false;
     answerCorrect.value = null; // Reset the answer correctness state
+  } else {
+    // If no more questions, check if we should stop or reset
+    if (dontStop.value) {
+      setupNewRound(); // Reset for a new round
+    } else {
+      // Optionally, you can handle the case where no more questions are left
+      console.log("No more questions left.");
+    }
   }
 }
 
