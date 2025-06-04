@@ -28,7 +28,7 @@
       >
         <span
           class="word"
-          @click="show = index + 'en'"
+          @click="show = show === index + 'en' ? '' : index + 'en'"
           :class="{
             show: show === index + 'en',
           }"
@@ -36,7 +36,7 @@
         >
         <span
           class="word_cn"
-          @click="show = index + 'cn'"
+          @click="show = show === index + 'cn' ? '' : index + 'cn'"
           :class="{
             show: show === index + 'cn',
           }"
