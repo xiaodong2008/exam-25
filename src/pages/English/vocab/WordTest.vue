@@ -3,10 +3,14 @@
     <div class="header">
       <h1>Word Test</h1>
       <div class="toolbar">
-        <CheckBox v-model="dontStop" />
-        <span class="toggle-text">Don't stop after one round</span>
-        <CheckBox v-model="oneMoreAttempt" />
-        <span class="toggle-text">One more attempt for each word</span>
+        <div class="toggle">
+          <CheckBox v-model="dontStop" />
+          <span class="toggle-text">Don't stop after one round</span>
+        </div>
+        <div class="toggle">
+          <CheckBox v-model="oneMoreAttempt" />
+          <span class="toggle-text">One more attempt for each word</span>
+        </div>
       </div>
     </div>
     <div class="content">
@@ -201,11 +205,13 @@ const vocabs_cn = [
   align-items: center;
   justify-content: center;
   margin-bottom: 20px;
-  gap: 6px;
+  gap: 12px;
   flex-wrap: wrap;
 
-  .checkbox:not(:first-child) {
-    margin-left: 10px;
+  .toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
   }
 }
 

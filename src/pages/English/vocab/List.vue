@@ -7,10 +7,14 @@
       </li>
     </ul> -->
     <div class="toolbar">
-      <CheckBox v-model="showWhenHover" class="checkbox" />
-      <span class="toggle-text">Show English When Hover</span>
-      <CheckBox v-model="showChineseWhenHover" class="checkbox" />
-      <span class="toggle-text">Show Chinese When Hover</span>
+      <div class="toggle">
+        <CheckBox v-model="showWhenHover" class="checkbox" />
+        <span class="toggle-text">Show English When Hover</span>
+      </div>
+      <div class="toggle">
+        <CheckBox v-model="showChineseWhenHover" class="checkbox" />
+        <span class="toggle-text">Show Chinese When Hover</span>
+      </div>
     </div>
     <div class="vocabs">
       <div
@@ -119,11 +123,13 @@ const vocabs_combined = vocabs.map((word, index) => ({
   align-items: center;
   justify-content: center;
   margin-bottom: 20px;
-  gap: 6px;
+  gap: 12px;
   flex-wrap: wrap;
 
-  .checkbox:not(:first-child) {
-    margin-left: 10px;
+  .toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
   }
 }
 
