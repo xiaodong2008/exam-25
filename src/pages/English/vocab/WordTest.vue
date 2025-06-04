@@ -48,7 +48,9 @@
         >
           Correct!
         </span>
-        <span> {{ totalAnswered }}/{{ qNums.length }} answered </span>
+        <span>
+          {{ qNums.length - questionQueue.length }}/{{ qNums.length }} answered
+        </span>
       </div>
       <div v-else class="word-test__end">
         <p>Test completed!</p>
