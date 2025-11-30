@@ -1,0 +1,544 @@
+<!doctype html>
+<html>
+  <html>
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <title>S5 GT2 Revisio</title>
+
+      <style></style>
+    </head>
+    <body>
+      <!doctype html>
+      <html lang="en">
+        <head>
+          <meta charset="UTF-8" />
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+          />
+          <title>Grammar Quiz: Immediate Feedback</title>
+          <style>
+            body {
+              font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+              background-color: #f0f2f5;
+              color: #333;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              min-height: 100vh;
+              margin: 0;
+              padding: 20px;
+              box-sizing: border-box;
+            }
+            .quiz-container {
+              background: white;
+              width: 100%;
+              max-width: 600px;
+              padding: 30px;
+              border-radius: 12px;
+              box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            }
+            h1 {
+              text-align: center;
+              color: #2c3e50;
+              margin-top: 0;
+              font-size: 1.5em;
+            }
+
+            .progress-bar {
+              width: 100%;
+              height: 6px;
+              background: #e0e0e0;
+              margin: 20px 0;
+              border-radius: 3px;
+              overflow: hidden;
+            }
+            .progress-fill {
+              height: 100%;
+              background: #3498db;
+              width: 0%;
+              transition: width 0.3s;
+            }
+
+            .question-card {
+              display: none;
+              animation: fadeIn 0.4s;
+            }
+            .question-card.active {
+              display: block;
+            }
+            @keyframes fadeIn {
+              from {
+                opacity: 0;
+                transform: translateY(10px);
+              }
+              to {
+                opacity: 1;
+                transform: translateY(0);
+              }
+            }
+
+            .question-text {
+              font-size: 1.2em;
+              font-weight: 600;
+              margin-bottom: 20px;
+              color: #2c3e50;
+            }
+            .options {
+              list-style: none;
+              padding: 0;
+            }
+            .option {
+              background: #f8f9fa;
+              border: 2px solid #e9ecef;
+              margin: 10px 0;
+              padding: 12px 15px;
+              border-radius: 8px;
+              cursor: pointer;
+              transition: all 0.2s;
+              font-size: 1em;
+            }
+            .option:hover {
+              border-color: #3498db;
+              background: #eef7fc;
+            }
+            .option.selected {
+              border-color: #3498db;
+              background: #3498db;
+              color: white;
+            }
+            .option.disabled {
+              cursor: default;
+              pointer-events: none;
+              opacity: 0.7;
+            }
+
+            .option.correct {
+              background: #2ecc71 !important;
+              border-color: #2ecc71 !important;
+              color: white !important;
+            }
+            .option.incorrect {
+              background: #e74c3c !important;
+              border-color: #e74c3c !important;
+              color: white !important;
+            }
+
+            .feedback {
+              display: none;
+              margin-top: 15px;
+              padding: 15px;
+              background: #f1f1f1;
+              border-radius: 8px;
+              font-size: 0.95em;
+              line-height: 1.4;
+              border-left: 5px solid #3498db;
+            }
+
+            .action-area {
+              margin-top: 20px;
+              display: flex;
+              flex-direction: column;
+              gap: 10px;
+            }
+
+            .btn {
+              padding: 12px 24px;
+              border: none;
+              border-radius: 6px;
+              font-size: 1em;
+              cursor: pointer;
+              font-weight: 600;
+              transition: background 0.2s;
+              width: 100%;
+            }
+            .btn-check {
+              background: #e67e22;
+              color: white;
+            }
+            .btn-check:hover {
+              background: #d35400;
+            }
+            .btn-next {
+              background: #3498db;
+              color: white;
+              display: none;
+            } /* Hidden initially */
+            .btn-next:hover {
+              background: #2980b9;
+            }
+
+            .results {
+              text-align: center;
+              display: none;
+            }
+            .score-circle {
+              width: 120px;
+              height: 120px;
+              background: #2c3e50;
+              color: white;
+              border-radius: 50%;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              font-size: 2em;
+              font-weight: bold;
+              margin: 0 auto 20px;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="quiz-container">
+            <h1>Grammar Revision</h1>
+            <div class="progress-bar">
+              <div class="progress-fill" id="progress"></div>
+            </div>
+
+            <div id="quiz-content"></div>
+
+            <div class="results" id="result-screen">
+              <div class="score-circle" id="final-score"></div>
+              <h2>Good Job!</h2>
+              <p>You have finished the revision exercises.</p>
+              <button
+                class="btn btn-next"
+                style="display: block"
+                onclick="location.reload()"
+              >
+                Try Again
+              </button>
+            </div>
+          </div>
+
+          <script>
+            const quizData = [
+              {
+                q: "Indirect Question: Rewrite 'Where did he go?' (I wonder...)",
+                options: [
+                  "I wonder where did he go.",
+                  "I wonder where he went.",
+                  "I wonder where went he.",
+                  "I wonder where he did go.",
+                ],
+                answer: 1,
+                rationale:
+                  "Correct! Remove 'did' and change 'go' to 'went' (Subject + Verb).",
+              },
+              {
+                q: "Indirect Question: Rewrite 'What are you cooking?' (Can you smell...)",
+                options: [
+                  "Can you smell what are you cooking?",
+                  "Can you smell what do you cook?",
+                  "Can you smell what you are cooking?",
+                  "Can you smell that you are cooking?",
+                ],
+                answer: 2,
+                rationale:
+                  "Correct! Keep 'what' but swap 'are' and 'you' to statement order.",
+              },
+              {
+                q: "Direct Question: Ask about the underlined part: **The teacher** explained the lesson.",
+                options: [
+                  "Who did explain the lesson?",
+                  "Who explained the lesson?",
+                  "What did the teacher explain?",
+                  "Who does explain the lesson?",
+                ],
+                answer: 1,
+                rationale:
+                  "Correct! When asking about the Subject, do not use 'did'.",
+              },
+              {
+                q: "Direct Question: Ask about the underlined part: She called **her mother**.",
+                options: [
+                  "Who called her mother?",
+                  "Who did she call?",
+                  "Who she called?",
+                  "Whom did she called?",
+                ],
+                answer: 1,
+                rationale:
+                  "Correct! Asking about the Object requires 'did' + base verb.",
+              },
+              {
+                q: "Passive Voice: 'The chef cooks the meal.' -> 'The meal ______ by the chef.'",
+                options: [
+                  "is cooked",
+                  "was cooked",
+                  "is being cooked",
+                  "has been cooked",
+                ],
+                answer: 0,
+                rationale:
+                  "Correct! Simple Present Passive: is/am/are + past participle.",
+              },
+              {
+                q: "Passive Voice: 'Someone has stolen my bike.' -> 'My bike ______.'",
+                options: [
+                  "was stolen",
+                  "is stolen",
+                  "has been stolen",
+                  "had been stolen",
+                ],
+                answer: 2,
+                rationale:
+                  "Correct! Present Perfect Passive: has/have + been + past participle.",
+              },
+              {
+                q: "Conditionals (Type 0): 'If you heat ice, it ______.'",
+                options: ["melted", "melts", "will melt", "would melt"],
+                answer: 1,
+                rationale:
+                  "Correct! General facts use Present Simple in both clauses.",
+              },
+              {
+                q: "Conditionals (Type 1): 'If it rains tomorrow, we ______ the picnic.'",
+                options: ["cancel", "would cancel", "will cancel", "canceled"],
+                answer: 2,
+                rationale:
+                  "Correct! Type 1 (Future possibility) uses 'will' in the result clause.",
+              },
+              {
+                q: "Conditionals (Type 2): 'If I were you, I ______ that job offer.'",
+                options: [
+                  "will accept",
+                  "would accept",
+                  "accepted",
+                  "would have accepted",
+                ],
+                answer: 1,
+                rationale:
+                  "Correct! Type 2 (Hypothetical) uses 'would' + base verb.",
+              },
+              {
+                q: "Conditionals (Type 3): 'If he had studied, he ______ the test.'",
+                options: [
+                  "would pass",
+                  "will pass",
+                  "passed",
+                  "would have passed",
+                ],
+                answer: 3,
+                rationale:
+                  "Correct! Type 3 (Past regret) uses 'would have' + past participle.",
+              },
+              {
+                q: "Prepositions: 'My birthday is ______ July 15th.'",
+                options: ["in", "at", "on", "of"],
+                answer: 2,
+                rationale: "Correct! Use 'on' for specific dates.",
+              },
+              {
+                q: "Prepositions: 'He was born ______ 1990.'",
+                options: ["on", "at", "in", "during"],
+                answer: 2,
+                rationale: "Correct! Use 'in' for years.",
+              },
+              {
+                q: "Prepositions: 'The picture is ______ the wall.'",
+                options: ["in", "at", "on", "above"],
+                answer: 2,
+                rationale: "Correct! Use 'on' for surfaces.",
+              },
+              {
+                q: "Prepositions: 'We drove ______ the tunnel.'",
+                options: ["across", "over", "through", "along"],
+                answer: 2,
+                rationale: "Correct! Use 'through' for 3D enclosed spaces.",
+              },
+              {
+                q: "Indirect Question: Rewrite 'Why is she sad?' (Tell me...)",
+                options: [
+                  "Tell me why is she sad.",
+                  "Tell me why she is sad.",
+                  "Tell me why she sad is.",
+                  "Tell me that why is she sad.",
+                ],
+                answer: 1,
+                rationale:
+                  "Correct! Word order becomes Question Word + Subject + Verb.",
+              },
+              {
+                q: "Direct Question: Ask about the underlined part: I have lived here **for ten years**.",
+                options: [
+                  "How long have you lived here?",
+                  "When did you live here?",
+                  "How long did you live here?",
+                  "How much time you lived here?",
+                ],
+                answer: 0,
+                rationale:
+                  "Correct! Use 'How long' for duration and keep Present Perfect tense.",
+              },
+              {
+                q: "Passive Voice: 'They will announce the results tomorrow.' -> 'The results ______ tomorrow.'",
+                options: [
+                  "will announce",
+                  "are announced",
+                  "will be announced",
+                  "would be announced",
+                ],
+                answer: 2,
+                rationale:
+                  "Correct! Future Passive: will + be + past participle.",
+              },
+              {
+                q: "Conditionals (Type 2): 'If I ______ a bird, I would fly to you.'",
+                options: ["am", "was", "were", "have been"],
+                answer: 2,
+                rationale:
+                  "Correct! In hypothetical conditionals, always use 'were' for 'be'.",
+              },
+              {
+                q: "Prepositions: 'The cat is hiding ______ the table.'",
+                options: ["on", "under", "in", "above"],
+                answer: 1,
+                rationale:
+                  "Correct! Use 'under' for being directly below something.",
+              },
+              {
+                q: "Prepositions: 'He walked ______ the room.'",
+                options: ["into", "in", "on", "at"],
+                answer: 0,
+                rationale:
+                  "Correct! Use 'into' for movement from outside to inside.",
+              },
+            ];
+
+            let currentQuestion = 0;
+            let score = 0;
+            let userSelection = null;
+
+            function initQuiz() {
+              const container = document.getElementById("quiz-content");
+              container.innerHTML = "";
+
+              quizData.forEach((data, index) => {
+                const card = document.createElement("div");
+                card.className = `question-card ${index === 0 ? "active" : ""}`;
+                card.id = `card-${index}`;
+
+                let optionsHtml = "";
+                data.options.forEach((opt, i) => {
+                  optionsHtml += `<li class="option" id="opt-${index}-${i}" onclick="selectOption(${index}, ${i})">${opt}</li>`;
+                });
+
+                // Button Logic: Check Answer first, then Next appears
+                const btnText =
+                  index === quizData.length - 1
+                    ? "Finish Quiz"
+                    : "Next Question";
+
+                card.innerHTML = `
+                <div class="question-text">Question ${index + 1} of ${quizData.length}<br><br>${data.q}</div>
+                <ul class="options">${optionsHtml}</ul>
+                <div class="feedback" id="feedback-${index}"></div>
+                <div class="action-area">
+                    <button class="btn btn-check" id="check-btn-${index}" onclick="checkAnswer(${index})">Check Answer / 檢查答案</button>
+                    <button class="btn btn-next" id="next-btn-${index}" onclick="nextQuestion(${index})">${btnText}</button>
+                </div>
+            `;
+                container.appendChild(card);
+              });
+              updateProgressBar();
+            }
+
+            function selectOption(qIndex, optIndex) {
+              // Prevent changing selection if already checked
+              const checkBtn = document.getElementById(`check-btn-${qIndex}`);
+              if (checkBtn.style.display === "none") return;
+
+              userSelection = optIndex;
+
+              // Remove 'selected' from all options in this card
+              for (let i = 0; i < 4; i++) {
+                const el = document.getElementById(`opt-${qIndex}-${i}`);
+                if (el) el.classList.remove("selected");
+              }
+
+              // Add 'selected' to clicked option
+              document
+                .getElementById(`opt-${qIndex}-${optIndex}`)
+                .classList.add("selected");
+            }
+
+            function checkAnswer(qIndex) {
+              if (userSelection === null) {
+                alert("Please select an answer first!");
+                return;
+              }
+
+              const data = quizData[qIndex];
+              const feedbackDiv = document.getElementById(`feedback-${qIndex}`);
+              const checkBtn = document.getElementById(`check-btn-${qIndex}`);
+              const nextBtn = document.getElementById(`next-btn-${qIndex}`);
+
+              // Disable all options
+              for (let i = 0; i < 4; i++) {
+                const el = document.getElementById(`opt-${qIndex}-${i}`);
+                if (el) el.classList.add("disabled");
+
+                // Highlight Correct Answer
+                if (i === data.answer) {
+                  el.classList.add("correct");
+                }
+                // Highlight User Wrong Answer
+                if (i === userSelection && i !== data.answer) {
+                  el.classList.add("incorrect");
+                }
+              }
+
+              // Show Feedback
+              if (userSelection === data.answer) {
+                score++;
+                feedbackDiv.innerHTML = `<strong style="color:#2ecc71">Correct!</strong><br>${data.rationale}`;
+              } else {
+                feedbackDiv.innerHTML = `<strong style="color:#e74c3c">Incorrect.</strong><br>${data.rationale}`;
+              }
+              feedbackDiv.style.display = "block";
+
+              // Swap Buttons
+              checkBtn.style.display = "none";
+              nextBtn.style.display = "block";
+            }
+
+            function nextQuestion(qIndex) {
+              if (qIndex === quizData.length - 1) {
+                showResults();
+              } else {
+                document
+                  .getElementById(`card-${qIndex}`)
+                  .classList.remove("active");
+                currentQuestion++;
+                document
+                  .getElementById(`card-${currentQuestion}`)
+                  .classList.add("active");
+                userSelection = null; // Reset selection for next question
+                updateProgressBar();
+              }
+            }
+
+            function updateProgressBar() {
+              const progressPercent =
+                ((currentQuestion + 1) / quizData.length) * 100;
+              document.getElementById("progress").style.width =
+                `${progressPercent}%`;
+            }
+
+            function showResults() {
+              document.getElementById("quiz-content").style.display = "none";
+              document.getElementById("result-screen").style.display = "block";
+              document.getElementById("final-score").innerText =
+                `${score}/${quizData.length}`;
+            }
+
+            initQuiz();
+          </script>
+        </body>
+      </html>
+
+      <script></script>
+    </body>
+  </html>
+</html>

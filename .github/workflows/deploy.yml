@@ -38,6 +38,7 @@ jobs:
         run: |
           mv dist _site
           cp _site/index.html _site/404.html
+          mv static _site
 
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v3
